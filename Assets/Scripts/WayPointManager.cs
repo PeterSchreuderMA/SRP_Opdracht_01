@@ -5,26 +5,43 @@ using UnityEngine;
 public class WayPointManager : MonoBehaviour
 {
     [SerializeField]
-    private List<Transform> wayPoints = new List<Transform>();
+    private List<Waypoint> wayPoints = new List<Waypoint>();
+
+    private int currentIndex = 0;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         FillList();
+        WayPointFollower.waypointAction += InitNextWaypoint;
     }
 
     void FillList()
     {
-        foreach (var item in FindObjectsOfType<GameObject>())
+        foreach (var item in FindObjectsOfType<Waypoint>())
         {
             if (item.tag == "Waypoint")
-                wayPoints.Add(item.transform);
+                wayPoints.Add(item);
         }
     }
 
-    public Transform GetFirstWayPoint()
+    public Waypoint GetFirstWayPoint()
     {
         if (wayPoints.Count == 0) return null;
         return wayPoints[0];
+    }
+
+    public Waypoint GetNextWayPoint()
+    {
+        return wayPoints[currentIndex];
+    }
+
+    void InitNextWaypoint(Waypoint _waypoint)
+    {
+        currentIndex++;
+
+        currentIndex = currentIndex % wayPoints.Count;
+
+        print(currentIndex);
     }
 }
